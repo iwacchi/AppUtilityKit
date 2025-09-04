@@ -5,6 +5,7 @@
 //  Created by iwacchi on 2025/08/18.
 //
 
+#if canImport(StoreKit)
 import Foundation
 import StoreKit
 
@@ -190,3 +191,4 @@ extension Product.SubscriptionPeriod {
         return DateInterval(start: start, end: end)
     }
 }
+#endif

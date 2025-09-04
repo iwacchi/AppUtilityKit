@@ -5,6 +5,7 @@
 //  Created by iwacchi on 2025/08/17.
 //
 
+#if canImport(StoreKit)
 import Foundation
 import StoreKit
 
@@ -164,7 +165,7 @@ public final class ProductPurchaseKit: @unchecked Sendable {
         try await AppStore.sync()
         let _ = await currentPurchasedTransaction()
     }
-    
+
     // MARK: - Observation
     /// `Transaction.updates` を監視開始
     /// - Parameters:
@@ -195,5 +196,6 @@ public final class ProductPurchaseKit: @unchecked Sendable {
             }
         }
     }
-    
+
 }
+#endif
