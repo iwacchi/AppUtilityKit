@@ -10,7 +10,7 @@ public import Foundation
 public import Combine
 #endif
 #if canImport(SwiftUI)
-public import SwiftUI
+internal import SwiftUI
 #endif
 
 // MARK: - Typed Key Protocol

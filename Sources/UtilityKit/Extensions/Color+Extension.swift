@@ -6,9 +6,9 @@
 //
 
 #if canImport(SwiftUI)
-public import Foundation
+internal import Foundation
 public import SwiftUI
-public import UIKit
+internal import UIKit
 
 // MARK: - Helpers
 /// 0...1 にクランプするユーティリティ。

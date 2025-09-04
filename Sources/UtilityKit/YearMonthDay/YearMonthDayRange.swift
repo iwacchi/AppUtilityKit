@@ -5,7 +5,7 @@
 //  Created by iwacchi on 2025/08/22.
 //
 
-public import Foundation
+internal import Foundation
 
 // MARK: - Info.plist カスタムキー
 /// Info.plist に定義する西暦年の範囲（最小年・最大年）を型安全に管理
