@@ -5,6 +5,7 @@
 //  Created by iwacchi on 2025/08/18.
 //
 
+#if canImport(StoreKit)
 import Foundation
 import StoreKit
 
@@ -20,5 +21,6 @@ import StoreKit
     
     /// 権利の剥奪処理（返金/失効/ダウングレード時）
     func downgradeExecute() async
-    
+
 }
+#endif

@@ -5,6 +5,7 @@
 //  Created by iwacchi on 2025/08/18.
 //
 
+#if canImport(SwiftUI)
 public import SwiftUI
 public import UIKit
 
@@ -69,3 +70,4 @@ public enum AppearanceMode: Int, CaseIterable, Codable, @unchecked Sendable {
     }
     
 }
+#endif

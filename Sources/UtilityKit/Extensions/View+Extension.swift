@@ -5,6 +5,7 @@
 //  Created by iwacchi on 2025/08/18.
 //
 
+#if canImport(SwiftUI)
 public import SwiftUI
 
 @available(iOS 13.0, *)
@@ -25,3 +26,4 @@ extension View {
     }
 
 }
+#endif

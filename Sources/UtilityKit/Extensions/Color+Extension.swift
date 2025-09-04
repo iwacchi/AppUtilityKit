@@ -5,6 +5,7 @@
 //  Created by iwacchi on 2025/08/17.
 //
 
+#if canImport(SwiftUI)
 public import Foundation
 public import SwiftUI
 public import UIKit
@@ -107,3 +108,4 @@ extension Color: Codable {
         }
     }
 }
+#endif
