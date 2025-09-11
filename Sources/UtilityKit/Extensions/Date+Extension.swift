@@ -353,6 +353,10 @@ extension Date {
         return calendar.component(.second, from: self)
     }
     
+    /// 現在のカレンダーに基づく「その日が属する月内での週番号」。
+    /// - Important: 週の始まり（`firstWeekday`）や年跨ぎ・月跨ぎの扱いはユーザー設定に依存します。
+    ///   例として、月初が週の途中から始まる場合は `1` が短い週になることがあります。
+    ///   UI 表示で「第 N 週」を示す用途では、`Calendar.current` の設定を前提にしてください。
     public var weekOfMonth: Int {
         let calendar = Calendar.current
         return calendar.component(.weekOfMonth, from: self)
@@ -458,7 +462,10 @@ extension Date {
         return calendar.startOfDay(for: start.yesterday)
     }
     
-    /// 月初（`Calendar.dateInterval(of:.month, for:)` の start。DST などを安全に処理）
+    /// 月初（その月における最初の瞬間：`00:00:00`）。
+    /// - Note: `Calendar.dateInterval(of: .month, for: self)?.start` を利用しており、
+    ///   サマータイム（DST）やタイムゾーン変更が絡む日付でも安全に先頭境界を取得します。
+    /// - Returns: 対象月の開始日時。失敗時は `self` を返します（極端な暦設定変更などのフェイルセーフ）。
     public var startOfMonth: Date {
         let calendar = Calendar.current
         return calendar.dateInterval(of: .month, for: self)?.start ?? self
@@ -547,13 +554,20 @@ extension Date {
         return self.formatted(.dateTime.year(yearStyle).locale(.current))
     }
     
-    /// 指定コンポーネントで相対移動。失敗時は `self` を返す
+    /// 指定コンポーネントで相対移動して新たな `Date` を返します（失敗時はフォールバックで `self`）。
+    /// - Parameters:
+    ///   - component: 追加・減算するカレンダーコンポーネント（例: `.day`, `.month`, `.year`）。
+    ///   - value: 加算（正）/ 減算（負）する量。
+    /// - Note: `Calendar.date(byAdding:value:to:)` を使用。DST などの不連続もカレンダー側で処理されます。
     public func move(_ component: Calendar.Component, value: Int) -> Date {
         let calendar = Calendar.current
         return calendar.date(byAdding: component, value: value, to: self) ?? self
     }
     
-    /// 指定したコンポーネントのみを保持して正規化（例: `[.year, .month, .day]` で時分秒を 00:00:00 に）
+    /// 指定したコンポーネント集合のみを残し、他の下位コンポーネントを正規化（ゼロ化）します。
+    /// - Parameter components: 残したいコンポーネントの集合（例: `[.year, .month, .day]`）。
+    /// - Returns: 正規化済み `Date`。生成に失敗した場合は `self` を返します。
+    /// - UseCase: カレンダーの「日単位比較」や絞り込みで、時分秒を常に `00:00:00` に揃えたい場合。
     public func trimmed(to components: Set<Calendar.Component>) -> Date {
         let calendar = Calendar.current
         let dateComponents = calendar.dateComponents(components, from: self)
@@ -618,31 +632,33 @@ extension Date {
         return calendar.isDate(self, inSameDayAs: date)
     }
     
-    /// 同一月かどうか
+    /// 同一月かどうか（年も含めて比較）。
+    /// - Important: タイムゾーンの影響を受けます。`Calendar.current` によるローカル基準での比較です。
     public func isSameMonth(_ date: Date) -> Bool {
         let calendar = Calendar.current
         return calendar.isDate(self, equalTo: date, toGranularity: .month)
     }
     
-    /// 同一年かどうか
+    /// 同一年かどうか。
+    /// - Important: `Calendar.current` のタイムゾーン/ロケールに依存します。
     public func isSameYear(_ date: Date) -> Bool {
         let calendar = Calendar.current
         return calendar.isDate(self, equalTo: date, toGranularity: .year)
     }
     
-    /// 同一時間かどうか
+    /// 同一時間かどうか（分・秒は無視）。
     public func isSameHour(_ date: Date) -> Bool {
         let calendar = Calendar.current
         return calendar.isDate(self, equalTo: date, toGranularity: .hour)
     }
     
-    /// 同一分かどうか
+    /// 同一分かどうか（秒は無視）。
     public func isSameMinute(_ date: Date) -> Bool {
         let calendar = Calendar.current
         return calendar.isDate(self, equalTo: date, toGranularity: .minute)
     }
     
-    /// 同一秒かどうか
+    /// 同一秒かどうか。
     public func isSameSecond(_ date: Date) -> Bool {
         let calendar = Calendar.current
         return calendar.isDate(self, equalTo: date, toGranularity: .second)
@@ -676,10 +692,9 @@ extension Date {
 /// `DateFormatter` 生成ヘルパ。`autoupdatingCurrent` によりロケール/タイムゾーン変更へ自動追従
 fileprivate enum DF {
     
-    /// Note: 都度生成はコストが掛かるが、共有キャッシュのスレッドセーフティ問題や
-    /// 環境変更（ロケール/タイムゾーン）への追従漏れを避けるために採用。
-    /// 大量フォーマットが必要な箇所では呼び出し側でのキャッシュ利用を検討してください。
-    /// 軽量な `DateFormatter` を都度生成（スレッドセーフティの観点から共有はしない）
+    /// `DateFormatter` を都度生成して返します。
+    /// - Policy: 共有インスタンスは使用せず、スレッドセーフティと環境変更（ロケール/タイムゾーン）への追従漏れを避けます。
+    /// - Performance: 大量処理が必要な箇所では呼び出し側でのキャッシュを検討してください。
     static func make() -> DateFormatter {
         let formatter = DateFormatter()
         formatter.calendar = .autoupdatingCurrent

@@ -14,7 +14,7 @@ import os
 /// - しきい値（`minimumLogLevel`）未満のログは評価すらしない（文字列構築コストを抑制）
 
 @available(iOS 14.0, *)
-public struct LoggerKit {
+public struct LoggerKit: @unchecked Sendable {
     
     /// 共有設定（サブシステムと最小出力レベル）
     /// - Note: 実行時に `LoggerKit.config` を差し替え可能
@@ -174,19 +174,15 @@ extension LoggerKit.Config {
 extension LoggerKit {
     
     /// アプリ全般
-    nonisolated(unsafe)
     public static let app = LoggerKit(category: "App")
     
     /// ネットワーク層
-    nonisolated(unsafe)
     public static let network = LoggerKit(category: "Network")
     
     /// 課金（IAP）
-    nonisolated(unsafe)
     public static let inAppPurchase = LoggerKit(category: "InAppPurchase")
     
     /// 分析/トラッキング
-    nonisolated(unsafe)
     public static let analytics = LoggerKit(category: "Analytics")
     
 }

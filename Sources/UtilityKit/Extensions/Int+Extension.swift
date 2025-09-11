@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Int+Extension.swift
 //  AppUtilityKit
 //
 //  Created by iwacchi on 2025/08/23.
