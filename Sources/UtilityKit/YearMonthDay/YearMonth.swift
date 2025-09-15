@@ -11,17 +11,17 @@ public import Foundation
 /// グレゴリオ暦（proleptic Gregorian）を前提とし、`Hashable` / `Comparable` に準拠しています。
 /// `Comparable` は `(year, month)` の辞書式順序で比較されます。
 public struct YearMonth: Hashable, Comparable, @unchecked Sendable {
-    
+
     public enum Component {
         case year, month
     }
-    
+
     /// 西暦年。許容範囲は `1...9999`。
     public let year: Int
-    
+
     /// 月（1 = 1月, 12 = 12月）。許容範囲は `1...12`。
     public let month: Int
-    
+
     /// 年と月を指定して初期化します。
     /// 与えられた値が許容範囲外の場合は `nil` を返します。
     /// - Parameters:
@@ -32,25 +32,25 @@ public struct YearMonth: Hashable, Comparable, @unchecked Sendable {
         self.year = year
         self.month = month
     }
-    
+
     /// `Date` から **グレゴリオ暦** の年・月を抽出します（`Calendar(identifier: .gregorian)`）。
     public init(date: Date) {
         let calendar = Calendar(identifier: .gregorian)
         self.year = calendar.component(.year, from: date)
         self.month = calendar.component(.month, from: date)
     }
-    
+
     public init(yearMonthDay: YearMonthDay) {
         self.year = yearMonthDay.year
         self.month = yearMonthDay.month
     }
-    
+
     public var yearMonthDays: [YearMonthDay] {
         let calendar = Calendar.current
         let maxDayOfMonth: Int = calendar.range(of: .day, in: .month, for: date)?.count ?? 1
-        return (1 ... maxDayOfMonth).map { day in .init(year: year, month: month, day: day)! }
+        return (1...maxDayOfMonth).map { day in .init(year: year, month: month, day: day)! }
     }
-    
+
     public var weekOfMonth: [Int] {
         let yearMonthDays = self.yearMonthDays
         var weekOfYears: [Int] = []
@@ -62,11 +62,11 @@ public struct YearMonth: Hashable, Comparable, @unchecked Sendable {
         }
         return weekOfYears
     }
-    
+
     public static var current: YearMonth {
         .init(date: Date())
     }
-    
+
     /// この `YearMonth` の**月初日（1日 00:00）**を表す `Date` を返します。
     /// カレンダーは明示的にグレゴリオ暦を使用します。タイムゾーンは `Calendar` のデフォルト（通常は `.current`）が使われます。
     /// 不正状態は `preconditionFailure` でクラッシュさせ、早期に検知します。
@@ -82,7 +82,7 @@ public struct YearMonth: Hashable, Comparable, @unchecked Sendable {
         }
         return date
     }
-    
+
     public func move(_ component: YearMonth.Component, value: Int) -> YearMonth? {
         switch component {
         case .year:
@@ -98,7 +98,7 @@ public struct YearMonth: Hashable, Comparable, @unchecked Sendable {
             return YearMonth(year: newYear, month: newMonth)
         }
     }
-    
+
     public static var max: YearMonth {
         let defaultMax: YearMonth = .init(year: 9999, month: 12)!
         guard let maxYear = YearMonthDayRange.range.maxYear else {
@@ -106,7 +106,7 @@ public struct YearMonth: Hashable, Comparable, @unchecked Sendable {
         }
         return .init(year: maxYear, month: 12) ?? defaultMax
     }
-    
+
     public static var min: YearMonth {
         let defaultMin: YearMonth = .init(year: 1, month: 1)!
         guard let minYear = YearMonthDayRange.range.minYear else {
@@ -114,11 +114,11 @@ public struct YearMonth: Hashable, Comparable, @unchecked Sendable {
         }
         return .init(year: minYear, month: 1) ?? defaultMin
     }
-    
+
     // MARK: - Comparable
-    
+
     public static func < (lhs: YearMonth, rhs: YearMonth) -> Bool {
         (lhs.year, lhs.month) < (rhs.year, rhs.month)
     }
-    
+
 }

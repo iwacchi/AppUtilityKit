@@ -11,7 +11,7 @@ public import Foundation
 /// - Note: `Calendar.current` / `.autoupdatingCurrent` を用いるため、ユーザーのロケールやタイムゾーン変更に追従します。
 ///         厳密にグレゴリオ暦固定にしたい場合は、呼び出し側で `Calendar(identifier: .gregorian)` を使う実装に差し替えてください。
 extension Int {
-    
+
     /// `DateFormatter` を用いて年だけをローカライズ表示する。
     /// - Returns: ローカライズ済みの年文字列（例: `"2025年"`）。無効な年が与えられた場合は空文字を返す。
     /// - Important: `Calendar.current` を使用するため、ユーザー設定に依存します。厳密な暦やタイムゾーンが必要な場合は調整してください。
@@ -28,7 +28,7 @@ extension Int {
         dateFormatter.setLocalizedDateFormatFromTemplate("y")
         return dateFormatter.string(from: date)
     }
-    
+
     /// iOS 15+ の `Date.FormatStyle` による年のローカライズ表示。
     /// - Parameter yearStyle: `Date.FormatStyle.Symbol.Year`（例: `.defaultDigits`, `.twoDigits` など）。
     /// - Returns: ローカライズ済みの年文字列。無効な年が与えられた場合は空文字を返す。
@@ -43,13 +43,13 @@ extension Int {
         // `FormatStyle` で年のみを指定し、ロケールは .current を明示
         return date.formatted(.dateTime.year(yearStyle).locale(.current))
     }
-    
+
 }
 
 // MARK: - DateFormatter helper
 /// `DateFormatter` 生成ヘルパ。`autoupdatingCurrent` によりロケール/タイムゾーン変更へ自動追従
-fileprivate enum DF {
-    
+private enum DF {
+
     /// 軽量な `DateFormatter` を都度生成（スレッドセーフティの観点から共有はしない）
     static func make() -> DateFormatter {
         let formatter = DateFormatter()
@@ -60,5 +60,5 @@ fileprivate enum DF {
         // NOTE: 高頻度で呼び出す場合は、呼び出し側でスレッドセーフなキャッシュやプール化も検討
         return formatter
     }
-    
+
 }

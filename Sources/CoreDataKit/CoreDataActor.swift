@@ -13,13 +13,13 @@ import Foundation
 @available(iOS 17.0, *)
 @globalActor
 public actor CoreDataActor {
-    
+
     public static let shared = CoreDataActor()
-    
+
     /// このアクターが利用する `UnownedSerialExecutor`
     /// - Note: 未設定時は `CoreDataExecutor.sharedUnownedExecutor` の構築で `preconditionFailure`
     nonisolated public var unownedExecutor: UnownedSerialExecutor {
         CoreDataExecutor.sharedUnownedExecutor
     }
-    
+
 }

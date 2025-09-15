@@ -11,41 +11,41 @@ public import Foundation
 /// - 目的: Calendar/TimeZone に依存しがちな `Date` の直接比較を避け、純粋な年月日で扱う
 /// - 不変化: 内部状態の破壊を避けるため、`year/month/day` は `let` にする
 public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
-    
+
     // MARK: - Calendar Policy
     /// 週番号や曜日の計算ポリシー（現状は **日本向けに `Calendar.current` を採用**）。
     /// 将来 ISO 週準拠に切り替える場合は、ここを `Calendar(identifier: .iso8601)` 等に置き換えるだけで全呼び出しを切り替えられる。
     private static var weekCalendar: Calendar { Calendar.current }
-    
+
     /// 日付移動の単位
     /// - Note: 年・月・日はグレゴリオ暦の解釈を前提とします。
     public enum Component {
         case year, month, day
     }
-    
+
     public let year: Int
-    
+
     public let month: Int
-    
+
     public let day: Int
-    
+
     /// 曜日（`date.weekday` を経由）
     /// - Important: `Date` の `weekday` 拡張が別途存在することを前提とします。拡張のカレンダー/タイムゾーン設定に依存します。
     public var weekday: Date.Weekday {
         return date.weekday
     }
-    
+
     /// 週番号（`date.weekOfYear` を経由）
     /// - Important: `Date` 側の拡張実装に依存します。ISO週かどうかなどは拡張の仕様に準拠します。
     public var weekOfMonth: Int {
         return date.weekOfMonth
     }
-    
+
     /// 年月へ射影（`YearMonth` 補助型に変換）
     public var yearMonth: YearMonth {
         return .init(yearMonthDay: self)
     }
-    
+
     // MARK: - Initialization
 
     /// 不正な日付（例: 2025-02-30）をはじくためのバリデーション付き初期化子（**グレゴリオ暦固定**）
@@ -56,7 +56,9 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
     /// - Note: `Calendar(identifier: .gregorian)` で検証。タイムゾーンの違いで日付がズレないよう、カレンダーは固定します。
     public init?(year: Int, month: Int, day: Int) {
         var comps = DateComponents()
-        comps.year = year; comps.month = month; comps.day = day
+        comps.year = year
+        comps.month = month
+        comps.day = day
         guard Calendar(identifier: .gregorian).date(from: comps) != nil else {
             return nil
         }
@@ -64,7 +66,7 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
         self.month = month
         self.day = day
     }
-    
+
     /// 週番号と曜日から日付を生成します（ローカルカレンダー依存）。
     /// - Note: 週番号の解釈は `YearMonthDay.weekCalendar` に従います（現状は `Calendar.current`）。
     /// - Parameters:
@@ -75,7 +77,10 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
     ///   ISO 週番号を用いる場合は `Calendar(identifier: .iso8601)` と `yearForWeekOfYear` を使う別実装を検討してください。
     public init?(year: Int, month: Int, weekOfMonth: Int, weekday: Date.Weekday) {
         var comps = DateComponents()
-        comps.year = year; comps.month = month; comps.weekOfMonth = weekOfMonth; comps.weekday = weekday.rawValue
+        comps.year = year
+        comps.month = month
+        comps.weekOfMonth = weekOfMonth
+        comps.weekday = weekday.rawValue
         guard let date = Self.weekCalendar.date(from: comps) else {
             return nil
         }
@@ -97,7 +102,9 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
     /// - Note: タイムゾーンは `Calendar(identifier: .gregorian)` のデフォルト（システムの現地時刻）に従います。
     public var date: Date {
         var comps = DateComponents()
-        comps.year = year; comps.month = month; comps.day = day
+        comps.year = year
+        comps.month = month
+        comps.day = day
         guard let d = Calendar(identifier: .gregorian).date(from: comps) else {
             preconditionFailure("Invalid YearMonthDay")
         }
@@ -118,7 +125,7 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
     public static var current: YearMonthDay {
         .init(date: Date())
     }
-    
+
     /// 明日（1日進めた値）
     public var tomorrow: YearMonthDay {
         return move(.day, value: 1)
@@ -128,14 +135,14 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
     public var yesterday: YearMonthDay {
         return move(.day, value: -1)
     }
-    
+
     /// 指定の `YearMonth` と年・月が一致するか
     /// - Parameter yearMonth: 比較対象の年・月
     /// - Returns: 同一なら `true`
     public func isSameYearMonth(_ yearMonth: YearMonth) -> Bool {
         return self.year == yearMonth.year && self.month == yearMonth.month
     }
-    
+
     /// 指定した単位で年月日を加減算します。
     /// - Parameters:
     ///   - component: `.year` / `.month` / `.day`
@@ -162,7 +169,7 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
             return .init(date: newDate)
         }
     }
-    
+
     // MARK: - Range Helpers
 
     /// 取りうる最小の年月日。`YearMonthDayRange.range.minYear` が存在しない場合は `0001-01-01`。
@@ -174,7 +181,7 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
         }
         return .init(year: minYear, month: 1, day: 1) ?? defaultMin
     }
-    
+
     /// 取りうる最大の年月日。`YearMonthDayRange.range.maxYear` が存在しない場合は `9999-12-31`。
     /// - Note: 外部依存（`YearMonthDayRange`）の値に基づきます。
     public static var max: YearMonthDay {
@@ -184,14 +191,16 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
         }
         return .init(year: maxYear, month: 12, day: 31) ?? defaultMax
     }
-    
+
     /// 任意カレンダー/タイムゾーンで `Date` に変換（正午を経由して DST 影響を避ける）
     public func date(in calendar: Calendar = .current, timeZone: TimeZone = .current) -> Date? {
         var cal = calendar
         cal.timeZone = timeZone
         var comps = DateComponents()
-        comps.year = year; comps.month = month; comps.day = day
-        comps.hour = 12   // 00:00 が存在しない日のガードとして正午を採用
+        comps.year = year
+        comps.month = month
+        comps.day = day
+        comps.hour = 12  // 00:00 が存在しない日のガードとして正午を採用
         guard let noon = cal.date(from: comps) else { return nil }
         return cal.startOfDay(for: noon)
     }

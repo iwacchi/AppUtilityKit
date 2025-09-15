@@ -10,7 +10,7 @@ import Foundation
 @available(iOS 17.0, *)
 @CoreDataActor
 public protocol Repository {
-    
+
     var context: ManagedObjectContext { get }
-    
+
 }

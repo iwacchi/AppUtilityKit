@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "LoggerKit", targets: ["LoggerKit"]),
         .library(name: "ProductPurchaseKit", targets: ["ProductPurchaseKit"]),
         .library(name: "UserDefaultKit", targets: ["UserDefaultKit"]),
-        .library(name: "AppUtilityKitCore",targets: ["AppUtilityKitCore"]),
+        .library(name: "AppUtilityKitCore", targets: ["AppUtilityKitCore"]),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
