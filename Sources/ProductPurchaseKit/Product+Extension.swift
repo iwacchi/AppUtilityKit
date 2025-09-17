@@ -29,31 +29,31 @@ extension Product {
     }
 
     /// 無料トライアルが“利用可能”か（導入割引が freeTrial かつ適格）
-    func hasFreeTrialOfferAvailable() async -> Bool {
+    public func hasFreeTrialOfferAvailable() async -> Bool {
         await qualifyingFreeTrialOffer() != nil
     }
 
     /// 無料トライアルの期間（値+単位）を返す。なければ nil
-    func freeTrialPeriod() async -> Product.SubscriptionPeriod? {
+    public func freeTrialPeriod() async -> Product.SubscriptionPeriod? {
         await qualifyingFreeTrialOffer()?.period
     }
 
     // MARK: - プロモーションオファー（復帰ユーザー等）
     /// プロモーションオファーのうち、無料トライアル（paymentMode == .freeTrial）のみを返す
     /// - Note: 利用可否はサーバー署名やコード引き換え等の条件に依存。ここでは「製品に設定されているか」を判定するのみ
-    func freeTrialPromotionalOffers() -> [Product.SubscriptionOffer] {
+    public func freeTrialPromotionalOffers() -> [Product.SubscriptionOffer] {
         guard let offers = self.subscription?.promotionalOffers else { return [] }
         return offers.filter { $0.paymentMode == .freeTrial }
     }
 
     /// プロモーションオファーとして「無料トライアルが設定されている」か（ユーザー適格性は未判定）
-    func hasFreeTrialPromotionalOfferConfigured() -> Bool {
+    public func hasFreeTrialPromotionalOfferConfigured() -> Bool {
         !freeTrialPromotionalOffers().isEmpty
     }
 
     /// 導入割引（intro）優先で無料トライアル期間を取得。無ければプロモーションオファーから取得
     /// - Returns: 最初に見つかった無料トライアルの期間（値+単位）
-    func freeTrialPeriodFromIntroOrPromo() async -> Product.SubscriptionPeriod? {
+    public func freeTrialPeriodFromIntroOrPromo() async -> Product.SubscriptionPeriod? {
         if let intro = await qualifyingFreeTrialOffer()?.period {
             return intro
         }
@@ -61,7 +61,7 @@ extension Product {
     }
 
     /// すべての無料トライアル期間候補（intro + promo）を返す（重複を含む可能性あり）
-    func allFreeTrialPeriods() async -> [Product.SubscriptionPeriod] {
+    public func allFreeTrialPeriods() async -> [Product.SubscriptionPeriod] {
         var periods: [Product.SubscriptionPeriod] = []
         if let intro = await qualifyingFreeTrialOffer()?.period {
             periods.append(intro)
@@ -71,7 +71,7 @@ extension Product {
     }
 
     /// intro/promo を通して最も長い無料トライアル期間を返す（概算日数で比較）
-    func bestFreeTrialPeriod(calendar: Calendar = .autoupdatingCurrent) async -> Product
+    public func bestFreeTrialPeriod(calendar: Calendar = .autoupdatingCurrent) async -> Product
         .SubscriptionPeriod?
     {
         let periods = await allFreeTrialPeriods()
@@ -81,7 +81,7 @@ extension Product {
     }
 
     /// 指定開始日から、無料トライアル終了日時を返す（最長の期間で計算）
-    func freeTrialEndDate(from start: Date, calendar: Calendar = .autoupdatingCurrent) async
+    public func freeTrialEndDate(from start: Date, calendar: Calendar = .autoupdatingCurrent) async
         -> Date?
     {
         guard let period = await bestFreeTrialPeriod(calendar: calendar) else { return nil }
@@ -89,7 +89,7 @@ extension Product {
     }
 
     /// UI向けの無料トライアルバッジ文字列（例: ja → "7日 無料", en → "Free for 7 days"）
-    func localizedFreeTrialBadge(
+    public func localizedFreeTrialBadge(
         unitsStyle: DateComponentsFormatter.UnitsStyle = .short,
         locale: Locale = .autoupdatingCurrent
     ) async -> String? {
