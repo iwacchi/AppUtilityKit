@@ -88,7 +88,7 @@ extension Product {
         return period.endDate(from: start, calendar: calendar)
     }
 
-    /// UI向けの無料トライアルバッジ文字列（例: ja → "7日 無料", en → "Free for 7 days"）
+    /// UI向けの無料トライアルバッジ文字列（例: ja → "7日間の無料お試し", en → "Free 7 days trial"）
     public func localizedFreeTrialBadge(
         unitsStyle: DateComponentsFormatter.UnitsStyle = .short,
         locale: Locale = .autoupdatingCurrent
@@ -96,9 +96,9 @@ extension Product {
         guard let period = await bestFreeTrialPeriod() else { return nil }
         let span = period.localizedDescription(unitsStyle: unitsStyle, locale: locale)
         if let code = locale.languageCode, code == "ja" {
-            return "\(span) 無料"
+            return "\(span)間の無料お試し"
         } else {
-            return "Free for \(span)"
+            return "Free \(span) trial"
         }
     }
 
