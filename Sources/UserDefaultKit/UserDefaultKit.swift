@@ -154,11 +154,16 @@ public struct UserDefaultKit<Value> {
 
     }
 
+}
+
+public enum UserDefaultKitValue {
+    
     /// 任意キーの生値を取得（Property Wrapper に依存しないユーティリティ）
     /// - Parameters:
     ///   - key: 保存キー文字列
     ///   - store: 参照先 `UserDefaults`（既定は `.standard`）
     /// - Returns: 保存された値（Property List 準拠型）。未登録は `nil`
+    @inlinable
     public static func value(for key: String, store: UserDefaults = .standard) -> Any? {
         return store.object(forKey: key)
     }
@@ -168,6 +173,7 @@ public struct UserDefaultKit<Value> {
     ///   - userDefaultKey: `UserDefaultKey` に準拠したキー
     ///   - store: 参照先 `UserDefaults`
     /// - Returns: 保存された値。未登録は `nil`
+    @inlinable
     public static func value(for userDefaultKey: UserDefaultKey, store: UserDefaults = .standard) -> Any? {
         return store.object(forKey: userDefaultKey.key)
     }
@@ -177,6 +183,7 @@ public struct UserDefaultKit<Value> {
     ///   - value: 保存する値（`String/Int/Double/Bool/Data/Array/Dictionary/Date/NSNumber` 等）
     ///   - key: 保存キー文字列
     ///   - store: 保存先 `UserDefaults`
+    @inlinable
     public static func set(_ value: Any?, for key: String, store: UserDefaults = .standard) {
         store.set(value, forKey: key)
     }
@@ -186,6 +193,7 @@ public struct UserDefaultKit<Value> {
     ///   - value: 保存する値
     ///   - userDefaultKey: `UserDefaultKey` に準拠したキー
     ///   - store: 保存先 `UserDefaults`
+    @inlinable
     public static func set(
         _ value: Any?,
         for userDefaultKey: UserDefaultKey,
@@ -195,22 +203,26 @@ public struct UserDefaultKit<Value> {
     }
 
     /// `Int` を取得（未登録時は `0` を返す、`UserDefaults` と同挙動）
+    @inlinable
     public static func integer(for key: String, store: UserDefaults = .standard) -> Int {
         return store.integer(forKey: key)
     }
 
     /// 型安全キーで `Int` を取得（未登録時は `0`）
+    @inlinable
     public static func integer(for userDefaultKey: UserDefaultKey, store: UserDefaults = .standard) -> Int
     {
         return store.integer(forKey: userDefaultKey.key)
     }
 
     /// `Double` を取得（未登録時は `0.0`）
+    @inlinable
     public static func double(for key: String, store: UserDefaults = .standard) -> Double {
         return store.double(forKey: key)
     }
 
     /// 型安全キーで `Double` を取得（未登録時は `0.0`）
+    @inlinable
     public static func double(for userDefaultKey: UserDefaultKey, store: UserDefaults = .standard)
         -> Double
     {
@@ -218,21 +230,25 @@ public struct UserDefaultKit<Value> {
     }
 
     /// `Bool` を取得（未登録時は `false`）
+    @inlinable
     public static func bool(for key: String, store: UserDefaults = .standard) -> Bool {
         return store.bool(forKey: key)
     }
 
     /// 型安全キーで `Bool` を取得（未登録時は `false`）
+    @inlinable
     public static func bool(for userDefaultKey: UserDefaultKey, store: UserDefaults = .standard) -> Bool {
         return store.bool(forKey: userDefaultKey.key)
     }
 
     /// `String` を取得（未登録は `nil`）
+    @inlinable
     public static func string(for key: String, store: UserDefaults = .standard) -> String? {
         return store.string(forKey: key)
     }
 
     /// 型安全キーで `String` を取得（未登録は `nil`）
+    @inlinable
     public static func string(for userDefaultKey: UserDefaultKey, store: UserDefaults = .standard)
         -> String?
     {
@@ -241,11 +257,13 @@ public struct UserDefaultKit<Value> {
 
     /// 配列を取得してジェネリクスにキャスト（未登録/キャスト失敗は `nil`）
     /// - Warning: ランタイムキャストに失敗する可能性があります。保存時の型と整合させてください。
+    @inlinable
     public static func array<T>(for key: String, store: UserDefaults = .standard) -> [T]? {
         return store.array(forKey: key) as? [T]
     }
 
     /// 型安全キーで配列を取得してキャスト（未登録/キャスト失敗は `nil`）
+    @inlinable
     public static func array<T>(for userDefaultKey: UserDefaultKey, store: UserDefaults = .standard)
         -> [T]?
     {
@@ -253,11 +271,13 @@ public struct UserDefaultKit<Value> {
     }
 
     /// `Data` を取得（未登録は `nil`）
+    @inlinable
     public static func data(for key: String, store: UserDefaults = .standard) -> Data? {
         return store.data(forKey: key)
     }
 
     /// 型安全キーで `Data` を取得（未登録は `nil`）
+    @inlinable
     public static func data(for userDefaultKey: UserDefaultKey, store: UserDefaults = .standard) -> Data? {
         return store.data(forKey: userDefaultKey.key)
     }
@@ -265,6 +285,7 @@ public struct UserDefaultKit<Value> {
     /// `Codable` を JSON からデコードして取得。
     /// - Returns: デコード成功時は `T`、失敗/未登録は `nil`
     /// - Note: 保存側は `JSONEncoder` でエンコードされている前提。
+    @inlinable
     public static func codable<T: Codable>(for key: String, store: UserDefaults = .standard) -> T? {
         if let data = store.data(forKey: key) {
             do {
@@ -277,6 +298,7 @@ public struct UserDefaultKit<Value> {
     }
 
     /// 型安全キーで `Codable` を取得（JSON デコード）。失敗時は `nil`
+    @inlinable
     public static func codable<T: Codable>(
         for userDefaultKey: UserDefaultKey,
         store: UserDefaults = .standard
@@ -292,15 +314,17 @@ public struct UserDefaultKit<Value> {
     }
 
     /// 任意キーを削除（キーごと除去）
+    @inlinable
     public static func removeObject(for key: String, store: UserDefaults = .standard) {
         store.removeObject(forKey: key)
     }
 
     /// 型安全キーで削除
+    @inlinable
     public static func removeObject(for userDefaultKey: UserDefaultKey, store: UserDefaults = .standard) {
         store.removeObject(forKey: userDefaultKey.key)
     }
-
+    
 }
 
 // MARK: - CodableUserDefaultKit（Codable 型向け）
@@ -556,3 +580,233 @@ extension RawRepresentableUserDefaultKit where Value.RawValue == Double {}
 extension RawRepresentableUserDefaultKit where Value.RawValue == Float {}
 
 extension RawRepresentableUserDefaultKit where Value.RawValue == Data {}
+
+@propertyWrapper
+public struct UbiquitousKeyValueKit<Value> {
+    
+    private let key: String
+    
+    private let defaultValue: Value
+    
+    private let store: NSUbiquitousKeyValueStore
+    
+    public init(key: String, defaultValue: Value, store: NSUbiquitousKeyValueStore = .default) {
+        self.key = key
+        self.defaultValue = defaultValue
+        self.store = store
+    }
+    
+    public init(
+        userDefaultKey: UserDefaultKey,
+        defaultValue: Value,
+        store: NSUbiquitousKeyValueStore = .default
+    ) {
+        self.key = userDefaultKey.key
+        self.defaultValue = defaultValue
+        self.store = store
+    }
+    
+    public var wrappedValue: Value {
+        get { store.object(forKey: key) as? Value ?? defaultValue }
+        set { store.set(newValue, forKey: key) }
+    }
+    
+    // public var projectedValue:
+    
+    public struct Access {
+        
+        private let key: String
+        
+        private let defaultValue: Value
+        
+        private let store: NSUbiquitousKeyValueStore
+        
+        public init(key: String, defaultValue: Value, store: NSUbiquitousKeyValueStore) {
+            self.key = key
+            self.defaultValue = defaultValue
+            self.store = store
+        }
+        
+        public var exists: Bool { store.object(forKey: key) != nil }
+        
+        public func remove() { store.removeObject(forKey: key) }
+        
+        public func migrateFromUserDefaults(
+            _ oldKey: String,
+            local: UserDefaults = .standard,
+            removeOld: Bool = true
+        ) {
+            guard store.object(forKey: key) == nil, let object = local.object(forKey: key) else {
+                return
+            }
+            store.set(object, forKey: key)
+            if removeOld { local.removeObject(forKey: oldKey) }
+        }
+        
+        #if canImport(Combine)
+        
+        @available(iOS 13.0, *)
+        public var publisher: AnyPublisher<Value, Never> {
+            NotificationCenter.default
+                .publisher(
+                    for: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+                    object: store
+                )
+                .map { _ in (store.object(forKey: key) as? Value) ?? defaultValue }
+                .eraseToAnyPublisher()
+        }
+        
+        #endif
+        
+    }
+    
+}
+
+public enum UbiquitousKeyValueKitValue {
+    
+    @discardableResult
+    public static func synchronize(_ store: NSUbiquitousKeyValueStore = .default) -> Bool {
+        store.synchronize()
+    }
+    
+    @inlinable
+    public static func value(for key: String, store: NSUbiquitousKeyValueStore = .default) -> Any? {
+        store.object(forKey: key)
+    }
+    
+    @inlinable
+    public static func value(
+        for userDefaultKey: UserDefaultKey,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> Any? {
+        store.object(forKey: userDefaultKey.key)
+    }
+    
+    @inlinable
+    public static func set(
+        _ value: Any?,
+        for key: String,
+        store: NSUbiquitousKeyValueStore = .default
+    ) {
+        store.set(value, forKey: key)
+    }
+    
+    @inlinable
+    public static func set(
+        _ value: Any?,
+        for userDefaultKey: UserDefaultKey,
+        store: NSUbiquitousKeyValueStore = .default
+    ) {
+        store.set(value, forKey: userDefaultKey.key)
+    }
+    
+    @inlinable
+    public static func longLong(
+        for key: String,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> Int64 {
+        store.longLong(forKey: key)
+    }
+    
+    @inlinable
+    public static func longLong(
+        for userDefaultKey: UserDefaultKey,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> Int64 {
+        store.longLong(forKey: userDefaultKey.key)
+    }
+    
+    @inlinable
+    public static func bool(
+        for key: String,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> Bool {
+        store.bool(forKey: key)
+    }
+    
+    @inlinable
+    public static func bool(
+        for userDefaultKey: UserDefaultKey,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> Bool {
+        store.bool(forKey: userDefaultKey.key)
+    }
+    
+    @inlinable
+    public static func double(
+        for key: String,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> Double {
+        store.double(forKey: key)
+    }
+    
+    @inlinable
+    public static func double(
+        for userDefaultKey: UserDefaultKey,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> Double {
+        store.double(forKey: userDefaultKey.key)
+    }
+    
+    @inlinable
+    public static func string(
+        for key: String,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> String? {
+        store.string(forKey: key)
+    }
+    
+    @inlinable
+    public static func string(
+        for userDefaultKey: UserDefaultKey,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> String? {
+        store.string(forKey: userDefaultKey.key)
+    }
+    
+    @inlinable
+    public static func array<T>(
+        for key: String,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> [T]? {
+        store.array(forKey: key) as? [T]
+    }
+    
+    @inlinable
+    public static func array<T>(
+        for userDefaultKey: UserDefaultKey,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> [T]? {
+        store.array(forKey: userDefaultKey.key) as? [T]
+    }
+    
+    @inlinable
+    public static func data(
+        for key: String,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> Data? {
+        store.data(forKey: key)
+    }
+    
+    @inlinable
+    public static func data(
+        for userDefaultKey: UserDefaultKey,
+        store: NSUbiquitousKeyValueStore = .default
+    ) -> Data? {
+        store.data(forKey: userDefaultKey.key)
+    }
+    
+    @inlinable
+    public static func removeObject(for key: String, store: NSUbiquitousKeyValueStore = .default) {
+        store.removeObject(forKey: key)
+    }
+    
+    @inlinable
+    public static func removeObject(
+        for userDefaultKey: UserDefaultKey,
+        store: NSUbiquitousKeyValueStore = .default
+    ) {
+        store.removeObject(forKey: userDefaultKey.key)
+    }
+    
+}

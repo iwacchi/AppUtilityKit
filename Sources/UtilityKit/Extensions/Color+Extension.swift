@@ -22,7 +22,7 @@ private func clamp01(_ x: Double) -> Double { min(max(x, 0), 1) }
 /// - エンコード時は **ライト** 外観でダイナミックカラーを解決し、テーマ差による JSON の揺れを防ぎます。
 /// - `getRed` が失敗した場合は、`CGColor` を sRGB に変換してから成分を取得します（グレースケールにも対応）。
 @available(iOS 14.0, *)
-extension Color: Codable {
+extension Color: @retroactive Decodable, @retroactive Encodable {
 
     public enum CodingKeys: String, CodingKey {
         /// 赤成分（0...1）
@@ -121,5 +121,46 @@ extension Color: Codable {
             return jsonString
         }
     }
+    
+    /// RGBA値をタプルで取得（sRGBに解決）
+    internal func rgbaComponents() -> (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat)? {
+        let uiColor = UIColor(self)
+            .resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        
+        if uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
+            return (r, g, b, a)
+        } else if let sRGB = CGColorSpace(name: CGColorSpace.sRGB),
+                  let converted = uiColor.cgColor.converted(
+                    to: sRGB,
+                    intent: .defaultIntent,
+                    options: nil
+                  ),
+                  let components = converted.components {
+            switch converted.numberOfComponents {
+                case 4: // RGBA
+                    return (components[0], components[1], components[2], components[3])
+                case 2: // Grayscale + Alpha
+                    return (components[0], components[0], components[0], components[1])
+                default:
+                    return nil
+            }
+        }
+        return nil
+    }
+    
+    /// RGBAが一致しているかどうかを判定（誤差許容あり）
+    public func isEqualRGBA(to color: Color, tolerance: CGFloat = 0.0001) -> Bool {
+        guard let color1 = self.rgbaComponents(),
+              let color2 = color.rgbaComponents() else {
+            return false
+        }
+        return abs(color1.r - color2.r) <= tolerance && abs(color1.g - color2.g) <= tolerance &&
+        abs(color1.b - color2.b) <= tolerance && abs(color1.a - color2.a) <= tolerance
+    }
+    
 }
 #endif
