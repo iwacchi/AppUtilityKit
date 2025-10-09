@@ -18,7 +18,7 @@ extension Date {
     /// `Calendar.component(.weekday, from:)` に対応する曜日列挙。
     /// `rawValue` は 1=Sun, 2=Mon, ..., 7=Sat（`Calendar` の仕様に準拠）。
     /// 並び順は `rawValue` の昇順で比較（`Comparable`）。
-    public enum Weekday: Int, Identifiable, Hashable, Codable, CaseIterable, Comparable, Equatable {
+    public enum Weekday: Int, Identifiable, Hashable, Codable, CaseIterable, Comparable, Equatable, @unchecked Sendable {
 
         public var id: Self { self }
 
@@ -84,7 +84,7 @@ extension Date {
      比較は `am < pm`。
      ロケールに応じた表示は `name` / `name(locale:)` を使用。
      */
-    public enum DayPeriod: Int, Identifiable, Hashable, Codable, CaseIterable, Equatable, Comparable
+    public enum DayPeriod: Int, Identifiable, Hashable, Codable, CaseIterable, Equatable, Comparable, @unchecked Sendable
     {
 
         public var id: Self { self }

@@ -810,3 +810,106 @@ public enum UbiquitousKeyValueKitValue {
     }
     
 }
+
+// MARK: - RawRepresentableUserDefaultKit（RawValue を保存）
+
+/// `RawRepresentable`（例: `enum MyFlag: Int`）を **RawValue** として保存・復元する Property Wrapper
+/// - 対応 RawValue: `String`, `Int`, `Bool`, `Double`, `Float`, `Data`
+/// - 例:
+///   ```swift
+///   enum SortOrder: Int { case none, asc, desc }
+///   @RawRepresentableUserDefaultKit(key: "sort", defaultValue: .none) var sort
+///   ```
+@propertyWrapper
+public struct RawRepresentableUbiquitousKeyValueKit<Value: RawRepresentable> {
+    public typealias Raw = Value.RawValue
+    private let key: String
+    private let defaultValue: Value
+    private let store: NSUbiquitousKeyValueStore
+
+    public init(key: String, defaultValue: Value, store: NSUbiquitousKeyValueStore = .default) {
+        self.key = key
+        self.defaultValue = defaultValue
+        self.store = store
+    }
+
+    public init(
+        userDefaultKey: UserDefaultKey,
+        defaultValue: Value,
+        store: NSUbiquitousKeyValueStore = .default
+    ) {
+        self.key = userDefaultKey.key
+        self.defaultValue = defaultValue
+        self.store = store
+    }
+
+    public var wrappedValue: Value {
+        get {
+            if let raw = store.object(forKey: key) as? Raw,
+                let value = Value(rawValue: raw)
+            {
+                return value
+            }
+            return defaultValue
+        }
+        set {
+            store.set(newValue.rawValue, forKey: key)
+        }
+    }
+
+    public var projectedValue: Access { Access(key: key, defaultValue: defaultValue, store: store) }
+
+    public struct Access {
+        private let key: String
+        private let defaultValue: Value
+        private let store: NSUbiquitousKeyValueStore
+
+        public var exists: Bool { store.object(forKey: key) != nil }
+
+        public init(key: String, defaultValue: Value, store: NSUbiquitousKeyValueStore) {
+            self.key = key
+            self.defaultValue = defaultValue
+            self.store = store
+        }
+
+        public func remove() { store.removeObject(forKey: key) }
+
+        public func migrate(from oldKey: String, removeOld: Bool = true) {
+            guard store.object(forKey: key) == nil,
+                let object = store.object(forKey: oldKey)
+            else { return }
+            store.set(object, forKey: key)
+            if removeOld { store.removeObject(forKey: oldKey) }
+        }
+
+        #if canImport(Combine)
+        @available(iOS 13.0, *)
+        public var publisher: AnyPublisher<Value, Never> {
+            NotificationCenter.default
+                .publisher(for: UserDefaults.didChangeNotification, object: store)
+                .map { _ in store.object(forKey: key) as? Raw }
+                .map { raw in raw.flatMap(Value.init(rawValue:)) ?? defaultValue }
+                .eraseToAnyPublisher()
+        }
+        #endif
+    }
+}
+
+// 制約: `Raw` が Property List として保存できる代表型に限定（コンパイル時に安全性を担保）
+extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == String {}
+
+extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Int {}
+
+extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Int64 {}
+
+extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Int32 {}
+
+extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Int16 {}
+
+extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Bool {}
+
+extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Double {}
+
+extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Float {}
+
+extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Data {}
