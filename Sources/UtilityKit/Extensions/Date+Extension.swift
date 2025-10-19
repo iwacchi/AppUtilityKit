@@ -71,6 +71,15 @@ extension Date {
         public static func < (lhs: Date.Weekday, rhs: Date.Weekday) -> Bool {
             lhs.rawValue < rhs.rawValue
         }
+        
+        public static func allCases(firstWeekday: Date.Weekday) -> [Date.Weekday] {
+            var weekdays = Self.allCases
+            while weekdays.first != firstWeekday {
+                let first = weekdays.removeFirst()
+                weekdays.append(first)
+            }
+            return weekdays
+        }
 
     }
 

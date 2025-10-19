@@ -40,6 +40,17 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
     public var weekOfMonth: Int {
         return date.weekOfMonth
     }
+    
+    /// `firstWeekday` を指定して月内週番号を計算します。
+    /// - Parameters:
+    ///   - firstWeekday: 週の開始曜日。`Calendar.current.firstWeekday` をこの値に一時的に置き換えて評価します。
+    /// - Returns: 指定ポリシーに基づく `weekOfMonth`。
+    /// - Note: `minimumDaysInFirstWeek` には触れていないため、必要なら呼び出し側方針として別途調整してください。
+    public func weekOfMonth(firstWeekday: Date.Weekday) -> Int {
+        var calendar = Calendar.current
+        calendar.firstWeekday = firstWeekday.rawValue
+        return calendar.component(.weekOfMonth, from: self.date)
+    }
 
     /// 年月へ射影（`YearMonth` 補助型に変換）
     public var yearMonth: YearMonth {
@@ -82,6 +93,28 @@ public struct YearMonthDay: Hashable, Comparable, @unchecked Sendable {
         comps.weekOfMonth = weekOfMonth
         comps.weekday = weekday.rawValue
         guard let date = Self.weekCalendar.date(from: comps) else {
+            return nil
+        }
+        self.year = date.year
+        self.month = date.month
+        self.day = date.day
+    }
+    
+    public init?(
+        year: Int,
+        month: Int,
+        weekOfMonth: Int,
+        weekday: Date.Weekday,
+        firstWeekday: Date.Weekday
+    ) {
+        var comps = DateComponents()
+        comps.year = year
+        comps.month = month
+        comps.weekOfMonth = weekOfMonth
+        comps.weekday = weekday.rawValue
+        var calendar = Calendar.current
+        calendar.firstWeekday = firstWeekday.rawValue
+        guard let date = calendar.date(from: comps) else {
             return nil
         }
         self.year = date.year
