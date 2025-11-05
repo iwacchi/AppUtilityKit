@@ -11,15 +11,15 @@ import StoreKit
 
 @available(iOS 15.0, *)
 // MARK: - Protocol
-/// 課金トランザクションの結果に応じてアプリ側の権利を適用/解除する実装ポイント
-/// - Note: UI更新や状態反映を伴うためメインアクターで実行する
+/// StoreKitの購入トランザクション結果に応じて、アプリ内の権利（非消耗/サブスクリプション等）を付与・更新・剥奪する実装ポイント。
+/// - Important: UI更新や状態反映を行うため、メインアクター上で実行されます。
 @MainActor public protocol ProductPurchaseExecutor {
 
-    /// 課金の付与処理（非消耗/サブスクなどの権利反映）
-    /// - Parameter transaction: 検証済みトランザクション
-    func upgradeExecute(transaction: Transaction) async
+    /// 権利の付与・更新処理（非消耗/サブスクリプション等の有効化）。
+    /// - Parameter transactions: 検証済みのトランザクション配列（複数件を想定）。
+    func upgradeExecute(transactions: [Transaction]) async
 
-    /// 権利の剥奪処理（返金/失効/ダウングレード時）
+    /// 権利の無効化処理（返金・失効・ダウングレードなどで権利が使えなくなった場合）。
     func downgradeExecute() async
 
 }
