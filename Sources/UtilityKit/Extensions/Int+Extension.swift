@@ -44,6 +44,40 @@ extension Int {
         return date.formatted(.dateTime.year(yearStyle).locale(.current))
     }
 
+    /// `DateFormatter` を用いて月だけをローカライズ表示する。
+    /// - Parameter year: 月を解釈するための西暦年（例: 2025）。省略不可。
+    /// - Returns: ローカライズ済みの月文字列（例: `"2月"` / `"February"`）。無効な値の場合は空文字を返す。
+    /// - Important: `Calendar.current` を使用するため、ユーザー設定に依存します。
+    public func toMonthString(in year: Int) -> String {
+        let calendar = Calendar.current
+        let components = DateComponents(year: year, month: self)
+        guard let date = calendar.date(from: components) else {
+            return ""
+        }
+        let dateFormatter = DF.make()
+        // "M" テンプレートをロケールに展開（例: ja_JP -> 2月 / en_US -> February）
+        dateFormatter.setLocalizedDateFormatFromTemplate("M")
+        return dateFormatter.string(from: date)
+    }
+
+    /// iOS 15+ の `Date.FormatStyle` による月のローカライズ表示。
+    /// - Parameters:
+    ///   - year: 月を解釈するための西暦年。
+    ///   - monthStyle: `Date.FormatStyle.Symbol.Month`（例: `.defaultDigits`, `.wide` など）。
+    /// - Returns: ローカライズ済みの月文字列。無効な値の場合は空文字を返す。
+    @available(iOS 15.0, *)
+    public func toMonthString(
+        in year: Int,
+        monthStyle: Date.FormatStyle.Symbol.Month
+    ) -> String {
+        let calendar = Calendar.current
+        let components = DateComponents(year: year, month: self)
+        guard let date = calendar.date(from: components) else {
+            return ""
+        }
+        return date.formatted(.dateTime.month(monthStyle).locale(.current))
+    }
+
 }
 
 // MARK: - DateFormatter helper
