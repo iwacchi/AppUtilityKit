@@ -309,6 +309,28 @@ extension Date {
         }
         return date
     }
+    
+    /// 時と分、秒を同時に置き換えた `Date` を返します。
+    /// - Parameters:
+    ///   - hour: 時（0...23）
+    ///   - minute: 分（0...59）
+    ///   - second: 秒（0...59）
+    /// - Returns: 生成に失敗した場合は `nil`。範囲外の値は `Calendar` により正規化されることがあります。
+    public func set(hour: Int, minute: Int, second: Int) -> Date? {
+        let calendar = Calendar.current
+        let components = DateComponents(
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            second: second
+        )
+        guard let date = calendar.date(from: components) else {
+            return nil
+        }
+        return date
+    }
 
     /// 分単位で丸めます。
     /// - Parameters:
