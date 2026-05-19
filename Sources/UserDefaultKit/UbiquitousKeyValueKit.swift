@@ -11,6 +11,8 @@ public import Foundation
 public import Combine
 #endif
 
+
+@available(watchOS 9.0, *)
 @propertyWrapper
 public struct UbiquitousKeyValueKit<Value> {
     
@@ -103,6 +105,7 @@ public struct UbiquitousKeyValueKit<Value> {
 ///   enum SortOrder: Int { case none, asc, desc }
 ///   @RawRepresentableUserDefaultKit(key: "sort", defaultValue: .none) var sort
 ///   ```
+@available(watchOS 9.0, *)
 @propertyWrapper
 public struct RawRepresentableUbiquitousKeyValueKit<Value: RawRepresentable> {
     public typealias Raw = Value.RawValue
@@ -182,22 +185,31 @@ public struct RawRepresentableUbiquitousKeyValueKit<Value: RawRepresentable> {
 }
 
 // 制約: `Raw` が Property List として保存できる代表型に限定（コンパイル時に安全性を担保）
+@available(watchOS 9.0, *)
 extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == String {}
 
+@available(watchOS 9.0, *)
 extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Int {}
 
+@available(watchOS 9.0, *)
 extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Int64 {}
 
+@available(watchOS 9.0, *)
 extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Int32 {}
 
+@available(watchOS 9.0, *)
 extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Int16 {}
 
+@available(watchOS 9.0, *)
 extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Bool {}
 
+@available(watchOS 9.0, *)
 extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Double {}
 
+@available(watchOS 9.0, *)
 extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Float {}
 
+@available(watchOS 9.0, *)
 extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Data {}
 
 // MARK: - CodableUbiquitousKeyValueKit
@@ -210,6 +222,7 @@ extension RawRepresentableUbiquitousKeyValueKit where Value.RawValue == Data {}
 /// ⚠️ 注意事項
 /// - iCloud KVS は容量制限（全体で約1MB）があるため、大きなデータを保存しないこと。
 /// - 端末間での同期は即時ではなく非同期で行われる。
+@available(watchOS 9.0, *)
 @propertyWrapper
 public struct CodableUbiquitousKeyValueKit<Value: Codable> {
     

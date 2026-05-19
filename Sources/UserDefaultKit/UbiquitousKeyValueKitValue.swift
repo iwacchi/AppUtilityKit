@@ -7,6 +7,8 @@
 
 public import Foundation
 
+
+@available(watchOS 9.0, *)
 public enum UbiquitousKeyValueKitValue {
     
     @discardableResult
