@@ -79,7 +79,7 @@ public struct UbiquitousKeyValueKit<Value> {
         
         #if canImport(Combine)
         
-        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 9.0, *)
         public var publisher: AnyPublisher<Value, Never> {
             NotificationCenter.default
                 .publisher(
@@ -169,7 +169,7 @@ public struct RawRepresentableUbiquitousKeyValueKit<Value: RawRepresentable> {
         }
 
         #if canImport(Combine)
-        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 9.0, *)
         public var publisher: AnyPublisher<Value, Never> {
             NotificationCenter.default
                 .publisher(
@@ -319,7 +319,7 @@ public struct CodableUbiquitousKeyValueKit<Value: Codable> {
         #if canImport(Combine)
         // MARK: - Combine Publisher
         /// iCloud KVS の変更を監視し、対応するキーの値を更新として受け取る Publisher
-        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 9.0, *)
         public var publisher: AnyPublisher<Value, Never> {
             NotificationCenter.default
                 .publisher(
