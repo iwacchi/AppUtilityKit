@@ -10,9 +10,6 @@ public import Foundation
 #if canImport(Combine)
 public import Combine
 #endif
-#if canImport(SwiftUI)
-internal import SwiftUI
-#endif
 
 // MARK: - Typed Key Protocol
 /// 型安全なキー定義用プロトコル（enum などで実装）
@@ -141,7 +138,7 @@ public struct UserDefaultKit<Value> {
 
         #if canImport(Combine)
         /// 値の変更を購読（`UserDefaults.didChangeNotification` を利用）
-        @available(iOS 13.0, *)
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
         public var publisher: AnyPublisher<Value, Never> {
             NotificationCenter.default
                 .publisher(for: UserDefaults.didChangeNotification, object: store)
@@ -291,7 +288,7 @@ public struct CodableUserDefaultKit<Value: Codable> {
 
         #if canImport(Combine)
         /// 値の変更を購読（`UserDefaults.didChangeNotification` を利用）。デコード失敗時は `defaultValue`
-        @available(iOS 13.0, *)
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
         public var publisher: AnyPublisher<Value, Never> {
             NotificationCenter.default
                 .publisher(for: UserDefaults.didChangeNotification, object: store)
@@ -379,7 +376,7 @@ public struct RawRepresentableUserDefaultKit<Value: RawRepresentable> {
         }
 
         #if canImport(Combine)
-        @available(iOS 13.0, *)
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
         public var publisher: AnyPublisher<Value, Never> {
             NotificationCenter.default
                 .publisher(for: UserDefaults.didChangeNotification, object: store)

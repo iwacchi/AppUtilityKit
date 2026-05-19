@@ -5,7 +5,7 @@
 //  Created by iwacchi on 2025/10/21.
 //
 
-import Foundation
+public import Foundation
 
 public enum UserDefaultKitValue {
     
@@ -177,4 +177,3 @@ public enum UserDefaultKitValue {
     }
     
 }
-

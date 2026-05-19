@@ -5,8 +5,11 @@
 //  Created by iwacchi on 2025/10/21.
 //
 
-import Foundation
-import Combine
+public import Foundation
+
+#if canImport(Combine)
+public import Combine
+#endif
 
 @propertyWrapper
 public struct UbiquitousKeyValueKit<Value> {
@@ -38,7 +41,9 @@ public struct UbiquitousKeyValueKit<Value> {
         set { store.set(newValue, forKey: key) }
     }
     
-    // public var projectedValue:
+    public var projectedValue: Access {
+        Access(key: key, defaultValue: defaultValue, store: store)
+    }
     
     public struct Access {
         
@@ -63,7 +68,7 @@ public struct UbiquitousKeyValueKit<Value> {
             local: UserDefaults = .standard,
             removeOld: Bool = true
         ) {
-            guard store.object(forKey: key) == nil, let object = local.object(forKey: key) else {
+            guard store.object(forKey: key) == nil, let object = local.object(forKey: oldKey) else {
                 return
             }
             store.set(object, forKey: key)
@@ -72,7 +77,7 @@ public struct UbiquitousKeyValueKit<Value> {
         
         #if canImport(Combine)
         
-        @available(iOS 13.0, *)
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
         public var publisher: AnyPublisher<Value, Never> {
             NotificationCenter.default
                 .publisher(
@@ -161,10 +166,13 @@ public struct RawRepresentableUbiquitousKeyValueKit<Value: RawRepresentable> {
         }
 
         #if canImport(Combine)
-        @available(iOS 13.0, *)
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
         public var publisher: AnyPublisher<Value, Never> {
             NotificationCenter.default
-                .publisher(for: UserDefaults.didChangeNotification, object: store)
+                .publisher(
+                    for: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+                    object: store
+                )
                 .map { _ in store.object(forKey: key) as? Raw }
                 .map { raw in raw.flatMap(Value.init(rawValue:)) ?? defaultValue }
                 .eraseToAnyPublisher()
@@ -298,7 +306,7 @@ public struct CodableUbiquitousKeyValueKit<Value: Codable> {
         #if canImport(Combine)
         // MARK: - Combine Publisher
         /// iCloud KVS の変更を監視し、対応するキーの値を更新として受け取る Publisher
-        @available(iOS 13.0, *)
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
         public var publisher: AnyPublisher<Value, Never> {
             NotificationCenter.default
                 .publisher(
