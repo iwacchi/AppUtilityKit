@@ -7,6 +7,7 @@
 
 @_exported import AppInfoKit
 @_exported import CoreDataKit
+@_exported import SwiftDataKit
 @_exported import LoggerKit
 @_exported import ProductPurchaseKit
 @_exported import UserDefaultKit

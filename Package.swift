@@ -10,6 +10,7 @@ let package = Package(
         .library(name: "UtilityKit", targets: ["UtilityKit"]),
         .library(name: "AppInfoKit", targets: ["AppInfoKit"]),
         .library(name: "CoreDataKit", targets: ["CoreDataKit"]),
+        .library(name: "SwiftDataKit", targets: ["SwiftDataKit"]),
         .library(name: "LoggerKit", targets: ["LoggerKit"]),
         .library(name: "ProductPurchaseKit", targets: ["ProductPurchaseKit"]),
         .library(name: "UserDefaultKit", targets: ["UserDefaultKit"]),
@@ -24,6 +25,7 @@ let package = Package(
                 "UtilityKit",
                 "AppInfoKit",
                 "CoreDataKit",
+                "SwiftDataKit",
                 "LoggerKit",
                 "ProductPurchaseKit",
                 "UserDefaultKit",
@@ -41,6 +43,10 @@ let package = Package(
         .target(
             name: "CoreDataKit",
             path: "Sources/CoreDataKit"
+        ),
+        .target(
+            name: "SwiftDataKit",
+            path: "Sources/SwiftDataKit"
         ),
         .target(
             name: "LoggerKit",
